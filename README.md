@@ -10,3 +10,8 @@ The app trains and evaluates multiple models:
 - Random Forest (tuned params, unscaled — matches the notebook)
 
 It displays test-set accuracy, a confusion matrix for the selected model, and allows users to enter applicant data to get a prediction.
+
+## Live App
+
+Streamlit Cloud App:  
+https://cst2216-loaneligibility-app-3w6wyhxkeshbgn9rlkubcy.streamlit.app/
