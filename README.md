@@ -11,6 +11,34 @@ The app trains and evaluates multiple models:
 
 It displays test-set accuracy, a confusion matrix for the selected model, and allows users to enter applicant data to get a prediction.
 
+## Project Structure
+- data/
+- src/
+- tests/
+- app.py
+- config.py
+- requirements.txt
+- runtime.txt
+- README.md
+
+## Run Locally
+- Create virtual environment  
+  `python -m venv venv`
+
+- Activate environment  
+  `venv\Scripts\activate`
+
+- Install dependencies  
+  `pip install -r requirements.txt`
+
+- Run the app  
+  `streamlit run app.py`
+
+## Author
+- Shara Khandakar
+- Algonquin College
+- Business Intelligence Systems Infrastructure
+
 ## Live App
 
 Streamlit Cloud App:  
