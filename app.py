@@ -67,19 +67,25 @@ st.sidebar.subheader("🧾 Applicant Inputs")
 raw = load_data(DATA_PATH, logger)
 cleaned = preprocess_like_notebook(raw, logger)
 feature_cols = [c for c in cleaned.columns if c not in [TARGET_COL, "Loan_ID"]]
-
 user_inputs = {}
+
 for col in feature_cols:
-    if cleaned[col].dtype == object:
-        user_inputs[col] = st.sidebar.selectbox(
-            col,
-            sorted(cleaned[col].dropna().unique().tolist())
-        )
+    series = cleaned[col]
+
+    # Treat text/category-like columns as dropdowns
+    if pd.api.types.is_object_dtype(series) or pd.api.types.is_string_dtype(series) or pd.api.types.is_categorical_dtype(series):
+        options = sorted(series.dropna().astype(str).unique().tolist())
+        user_inputs[col] = st.sidebar.selectbox(col, options)
+
+    # Treat numeric columns as number inputs
+    elif pd.api.types.is_numeric_dtype(series):
+        default_value = float(series.dropna().median()) if not series.dropna().empty else 0.0
+        user_inputs[col] = st.sidebar.number_input(col, value=default_value)
+
+    # Fallback
     else:
-        user_inputs[col] = st.sidebar.number_input(
-            col,
-            value=float(cleaned[col].median())
-        )
+        options = sorted(series.dropna().astype(str).unique().tolist())
+        user_inputs[col] = st.sidebar.selectbox(col, options)
 
 predict_clicked = st.sidebar.button("🔮 Predict")
 
