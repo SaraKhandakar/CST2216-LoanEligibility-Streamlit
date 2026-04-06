@@ -1,4 +1,5 @@
 import joblib
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import LogisticRegression
@@ -9,17 +10,35 @@ def split_scale_train_all(df, target_col, test_size, random_state, rf_tuned_para
     x = df.drop(target_col, axis=1)
     y = df[target_col]
 
+    logger.info(f"Training dataframe shape: {df.shape}")
+    logger.info(f"NaNs in full X before split: {x.isna().sum().sum()}")
+    logger.info(f"NaNs in full y before split: {y.isna().sum()}")
+
     xtrain, xtest, ytrain, ytest = train_test_split(
         x, y, test_size=test_size, stratify=y, random_state=random_state
     )
+
+    logger.info(f"NaNs in xtrain before scaling: {xtrain.isna().sum().sum()}")
+    logger.info(f"NaNs in xtest before scaling: {xtest.isna().sum().sum()}")
+    logger.info(f"NaNs in ytrain: {ytrain.isna().sum()}")
+    logger.info(f"NaNs in ytest: {ytest.isna().sum()}")
 
     # MinMaxScaler exactly like notebook
     scaler = MinMaxScaler()
     xtrain_scaled = scaler.fit_transform(xtrain)
     xtest_scaled = scaler.transform(xtest)
 
+    logger.info(f"NaNs in xtrain_scaled: {np.isnan(xtrain_scaled).sum()}")
+    logger.info(f"NaNs in xtest_scaled: {np.isnan(xtest_scaled).sum()}")
+    logger.info(f"Infs in xtrain_scaled: {np.isinf(xtrain_scaled).sum()}")
+    logger.info(f"Infs in xtest_scaled: {np.isinf(xtest_scaled).sum()}")
+
+    # Final safety check
+    if np.isnan(xtrain_scaled).sum() > 0 or np.isnan(xtest_scaled).sum() > 0:
+        raise ValueError("NaN values still exist after preprocessing/scaling.")
+
     logger.info("Training Logistic Regression...")
-    lr = LogisticRegression().fit(xtrain_scaled, ytrain)
+    lr = LogisticRegression(max_iter=1000).fit(xtrain_scaled, ytrain)
 
     logger.info("Training Decision Tree...")
     dt = DecisionTreeClassifier().fit(xtrain_scaled, ytrain)
@@ -27,7 +46,6 @@ def split_scale_train_all(df, target_col, test_size, random_state, rf_tuned_para
     logger.info("Training Random Forest (default)...")
     rf_default = RandomForestClassifier().fit(xtrain_scaled, ytrain)
 
-    # Notebook tuned RF uses *unscaled* xtrain/xtest in the later part
     logger.info(f"Training Random Forest (tuned params={rf_tuned_params}) on unscaled data...")
     rf_tuned = RandomForestClassifier(**rf_tuned_params).fit(xtrain, ytrain)
 

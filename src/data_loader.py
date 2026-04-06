@@ -10,4 +10,3 @@ def load_data(csv_path: Path, logger) -> pd.DataFrame:
     except Exception:
         logger.exception("Failed to load dataset.")
         raise
-    

@@ -3,25 +3,40 @@ import pandas as pd
 def preprocess_like_notebook(df: pd.DataFrame, logger) -> pd.DataFrame:
     df = df.copy()
 
+    logger.info(f"Initial shape: {df.shape}")
+    logger.info(f"Initial missing values:\n{df.isna().sum()}")
+
     # Convert to object like notebook
     df["Credit_History"] = df["Credit_History"].astype("object")
     df["Loan_Amount_Term"] = df["Loan_Amount_Term"].astype("object")
 
-    # Impute missing values exactly like notebook
-    df["Gender"].fillna("Male", inplace=True)
-    df["Married"].fillna(df["Married"].mode()[0], inplace=True)
-    df["Dependents"].fillna(df["Dependents"].mode()[0], inplace=True)
-    df["Self_Employed"].fillna(df["Self_Employed"].mode()[0], inplace=True)
-    df["Loan_Amount_Term"].fillna(df["Loan_Amount_Term"].mode()[0], inplace=True)
-    df["Credit_History"].fillna(df["Credit_History"].mode()[0], inplace=True)
+    # Fill missing categorical values
+    df["Gender"] = df["Gender"].fillna("Male")
+    df["Married"] = df["Married"].fillna(df["Married"].mode()[0])
+    df["Dependents"] = df["Dependents"].fillna(df["Dependents"].mode()[0])
+    df["Self_Employed"] = df["Self_Employed"].fillna(df["Self_Employed"].mode()[0])
+    df["Loan_Amount_Term"] = df["Loan_Amount_Term"].fillna(df["Loan_Amount_Term"].mode()[0])
+    df["Credit_History"] = df["Credit_History"].fillna(df["Credit_History"].mode()[0])
 
-    df["LoanAmount"].fillna(df["LoanAmount"].median(), inplace=True)
+    # Fill missing numeric values
+    df["LoanAmount"] = df["LoanAmount"].fillna(df["LoanAmount"].median())
+    df["ApplicantIncome"] = df["ApplicantIncome"].fillna(df["ApplicantIncome"].median())
+    df["CoapplicantIncome"] = df["CoapplicantIncome"].fillna(df["CoapplicantIncome"].median())
+
+    logger.info(f"Missing values after fillna:\n{df.isna().sum()}")
+
+    # Drop any leftover missing rows
+    df = df.dropna()
+
+    logger.info(f"Shape after dropna: {df.shape}")
+    logger.info(f"Missing values after dropna:\n{df.isna().sum()}")
 
     # Drop Loan_ID
     if "Loan_ID" in df.columns:
         df = df.drop("Loan_ID", axis=1)
 
     return df
+
 
 def make_dummies_and_target(df: pd.DataFrame, dummy_cols: list[str], target_col: str, logger) -> pd.DataFrame:
     df = df.copy()
@@ -31,5 +46,8 @@ def make_dummies_and_target(df: pd.DataFrame, dummy_cols: list[str], target_col:
 
     # Target Y/N -> 1/0 exactly like notebook
     df[target_col] = df[target_col].replace({"Y": 1, "N": 0})
+
+    logger.info(f"Final columns after dummies:\n{df.columns.tolist()}")
+    logger.info(f"Final missing values before training:\n{df.isna().sum()}")
 
     return df
