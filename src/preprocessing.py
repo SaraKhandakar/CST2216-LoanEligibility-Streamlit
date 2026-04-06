@@ -44,9 +44,23 @@ def make_dummies_and_target(df: pd.DataFrame, dummy_cols: list[str], target_col:
     # Dummies exactly like notebook
     df = pd.get_dummies(df, columns=dummy_cols, dtype=int)
 
-    # Target Y/N -> 1/0 exactly like notebook
+    # Clean target column first
+    df[target_col] = df[target_col].astype(str).str.strip()
+
+    # Convert Y/N -> 1/0
     df[target_col] = df[target_col].replace({"Y": 1, "N": 0})
 
+    # Force numeric
+    df[target_col] = pd.to_numeric(df[target_col], errors="coerce")
+
+    # Drop any rows where target is invalid
+    df = df.dropna(subset=[target_col])
+
+    # Force integer class labels
+    df[target_col] = df[target_col].astype(int)
+
+    logger.info(f"Target unique values after conversion: {df[target_col].unique()}")
+    logger.info(f"Target dtype after conversion: {df[target_col].dtype}")
     logger.info(f"Final columns after dummies:\n{df.columns.tolist()}")
     logger.info(f"Final missing values before training:\n{df.isna().sum()}")
 

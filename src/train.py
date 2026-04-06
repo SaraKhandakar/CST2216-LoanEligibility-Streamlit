@@ -9,6 +9,9 @@ from sklearn.ensemble import RandomForestClassifier
 def split_scale_train_all(df, target_col, test_size, random_state, rf_tuned_params, logger):
     x = df.drop(target_col, axis=1)
     y = df[target_col]
+    
+    logger.info(f"Target dtype before split: {y.dtype}")
+    logger.info(f"Target unique values before split: {y.unique()}")
 
     logger.info(f"Training dataframe shape: {df.shape}")
     logger.info(f"NaNs in full X before split: {x.isna().sum().sum()}")
