@@ -1,43 +1,92 @@
 # Loan Eligibility Predictor (Multi-Model) — CST2216 Term Project
 
 ## Overview
-This project modularizes the Level-1 Jupyter notebook *Loan_Eligibility_Model_Solution.ipynb* into a maintainable Python codebase and deploys it as a Streamlit web app.
 
-The app trains and evaluates multiple models:
-- Logistic Regression (scaled)
-- Decision Tree (scaled)
-- Random Forest (default, scaled)
-- Random Forest (tuned params, unscaled — matches the notebook)
+-   This project converts the original Loan Eligibility notebook into a
+    modular Python application
 
-It displays test-set accuracy, a confusion matrix for the selected model, and allows users to enter applicant data to get a prediction.
+-   The app trains and compares multiple machine learning models
+
+-   It is deployed using Streamlit for interactive predictions
+
+-   Models included:
+
+    -   Logistic Regression (scaled)
+    -   Decision Tree (scaled)
+    -   Random Forest (default, scaled)
+    -   Random Forest (tuned, unscaled)
+
+-   The app shows:
+
+    -   Model accuracy comparison
+    -   Confusion matrix for selected model
+    -   User-based prediction with probability
+
+## Logging
+
+-   Logging is implemented using Python logging module
+-   Logs are stored in logs/app.log
+-   Uses file logging and console output
+-   Tracks data loading, preprocessing, training, and predictions
+-   Rotating logs prevent large file sizes
 
 ## Project Structure
-- data/
-- src/
-- tests/
-- app.py
-- config.py
-- requirements.txt
-- runtime.txt
-- README.md
+
+-   app.py
+
+-   config.py
+
+-   requirements.txt
+
+-   runtime.txt
+
+-   README.md
+
+-   data/
+
+-   src/
+
+    -   data_loader.py
+    -   preprocessing.py
+    -   train.py
+    -   evaluate.py
+    -   predict.py
+    -   utils.py
+
+-   models/
+
+    -   artifacts.joblib
+
+-   logs/
+
+    -   app.log
+
+-   tests/
 
 ## Run Locally
-- Create virtual environment  
-  `python -m venv venv`
 
-- Activate environment  
-  `venv\Scripts\activate`
+-   Create virtual environment
 
-- Install dependencies  
-  `pip install -r requirements.txt`
+-   python -m venv venv
 
-- Run the app  
-  `streamlit run app.py`
+-   Activate environment
+
+-   venv
+
+-   Install dependencies
+
+-   pip install -r requirements.txt
+
+-   Run the app
+
+-   streamlit run app.py
 
 ## Author
-- Shara Khandakar
-- Algonquin College
-- Business Intelligence Systems Infrastructure
+
+-   Shara Khandakar
+-   Algonquin College
+-   Business Intelligence Systems Infrastructure
+
 
 ## Live App
 
